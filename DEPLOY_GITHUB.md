@@ -35,9 +35,26 @@ git push -u origin main
 
 GitHub Actions will automatically run the `.github/workflows/deploy.yml` workflow, build the Vite app, and publish your website live within ~60 seconds.
 
+### Live Status
+Your portfolio is live at:
+🔗 **[https://jeevanand-24.github.io/portfolio/](https://jeevanand-24.github.io/portfolio/)**
+
+---
+
+### Instant Updates
+Whenever you make updates to your portfolio, you can deploy them in one command:
+```bash
+cd frontend
+npm run deploy
+```
+Or simply push your commits to `main`:
+```bash
+git push origin main
+```
+
 ---
 
 ### Key Optimizations Already Included:
 - **`HashRouter`**: 100% immune to 404 errors on page reloads and direct links.
 - **Relative Base Path (`./`)**: Automatically works on any custom repo URL or root domain.
-- **Automated CI/CD**: Every time you make changes and run `git push`, your live site updates automatically!
+- **Dual Deployment**: Deployed via `gh-pages` branch with GitHub Actions CI/CD ready as backup.
