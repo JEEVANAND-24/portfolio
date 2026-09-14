@@ -2,11 +2,9 @@ import { profile } from '../data/resumeData';
 import { useTheme } from '../context/ThemeContext';
 import { AwsLogo } from './AwsIcons';
 import {
-  FiDownload, FiChevronDown, FiMail, FiFlag, FiSun, FiMoon
+  FiDownload, FiChevronDown, FiMail, FiSun, FiMoon
 } from 'react-icons/fi';
-import {
-  FaFacebookF, FaXTwitter, FaInstagram, FaLinkedinIn, FaGithub
-} from 'react-icons/fa6';
+import { FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 
 export default function Header() {
   const { theme, toggleTheme, accent, setAccent } = useTheme();
@@ -144,25 +142,13 @@ export default function Header() {
               <span>{profile.email}</span>
             </a>
 
-            {/* Row 3: Social Icons */}
+            {/* Row 3: Social Icons — LinkedIn & GitHub only */}
             <div className="console-socials-row">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="console-social-icon" title="Facebook">
-                <FaFacebookF size={11} />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="console-social-icon" title="X (Twitter)">
-                <FaXTwitter size={11} />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="console-social-icon" title="Instagram">
-                <FaInstagram size={12} />
-              </a>
               <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="console-social-icon" title="LinkedIn">
                 <FaLinkedinIn size={12} />
               </a>
               <a href={profile.github} target="_blank" rel="noopener noreferrer" className="console-social-icon" title="GitHub">
                 <FaGithub size={12} />
-              </a>
-              <a href={profile.github} target="_blank" rel="noopener noreferrer" className="console-social-icon" title="Certifications / Portfolio">
-                <FiFlag size={11} />
               </a>
             </div>
           </div>
