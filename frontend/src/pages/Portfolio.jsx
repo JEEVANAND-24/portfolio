@@ -46,9 +46,9 @@ export default function Portfolio() {
           <motion.div
             key={proj.id}
             className="project-card"
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
+            transition={{ duration: 0.15, delay: i * 0.02 }}
           >
             <div className="project-thumb">
               <div className={`project-type-badge ${proj.type}`}>PROJECT</div>
@@ -83,9 +83,9 @@ export default function Portfolio() {
           <motion.div
             key={cert.id}
             className="project-card"
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: (projects.length + i) * 0.08 }}
+            transition={{ duration: 0.15, delay: (projects.length + i) * 0.02 }}
           >
             <div className="project-thumb" style={{ background: `linear-gradient(135deg, ${cert.color}22 0%, #0f172a 100%)` }}>
               <div className="project-type-badge CERTIFICATIONS">CERTIFICATION</div>

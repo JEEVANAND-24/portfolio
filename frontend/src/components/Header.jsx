@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa6';
 
 export default function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, accent, setAccent } = useTheme();
 
   const initials = profile.name
     ? profile.name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('')
@@ -31,6 +31,34 @@ export default function Header() {
               <AwsLogo size={14} color="#FF9900" />
               <span>operator console</span>
             </span>
+
+            <div className="accent-switcher-group" title="Select Accent Palette">
+              <button
+                className={`accent-dot dot-blue ${accent === 'blue' ? 'active' : ''}`}
+                onClick={() => setAccent('blue')}
+                title="Glacier Blue"
+                type="button"
+              />
+              <button
+                className={`accent-dot dot-teal ${accent === 'teal' ? 'active' : ''}`}
+                onClick={() => setAccent('teal')}
+                title="Calm Teal"
+                type="button"
+              />
+              <button
+                className={`accent-dot dot-sage ${accent === 'sage' ? 'active' : ''}`}
+                onClick={() => setAccent('sage')}
+                title="Soft Sage"
+                type="button"
+              />
+              <button
+                className={`accent-dot dot-purple ${accent === 'purple' ? 'active' : ''}`}
+                onClick={() => setAccent('purple')}
+                title="Serene Lavender"
+                type="button"
+              />
+            </div>
+
             <button 
               className="theme-toggle-pill"
               onClick={toggleTheme}
@@ -59,7 +87,7 @@ export default function Header() {
             <div className="console-avatar-ring">
               <div className="console-avatar-inner">
                 {profile.avatarUrl ? (
-                  <img src={profile.avatarUrl} alt={profile.name} />
+                  <img src={profile.avatarUrl} alt={profile.name} decoding="async" loading="eager" />
                 ) : (
                   <span>{initials}</span>
                 )}

@@ -6,12 +6,63 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: 'http://localhost:5173' }));
-app.use(express.json());
+// ── Rate Limiting Store (In-Memory) ───────────────────────────
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 mins
+const MAX_REQUESTS_PER_WINDOW = 5;
+
+const rateLimiter = (req, res, next) => {
+  const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+  const now = Date.now();
+  const record = rateLimitStore.get(ip) || { count: 0, startTime: now };
+
+  if (now - record.startTime > RATE_LIMIT_WINDOW_MS) {
+    record.count = 1;
+    record.startTime = now;
+  } else {
+    record.count += 1;
+  }
+
+  rateLimitStore.set(ip, record);
+
+  if (record.count > MAX_REQUESTS_PER_WINDOW) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded. Route 53 throttling active. Please retry in 15 minutes.',
+    });
+  }
+
+  next();
+};
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://JEEVANAND-24.github.io',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.some((o) => origin.startsWith(o))) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow for local development flexibility
+      }
+    },
+  })
+);
+
+app.use(express.json({ limit: '50kb' }));
 
 // ── Health check ─────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'running', region: 'ap-south-1', uptime: process.uptime() });
+  res.json({
+    status: 'running',
+    region: 'ap-south-1',
+    service: 'AWS Operator Dispatcher API',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ── DevOps stats (gamification data) ─────────────────────────
@@ -29,7 +80,7 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
-// ── Fake CloudTrail activity feed ─────────────────────────────
+// ── CloudTrail activity feed ─────────────────────────────
 app.get('/api/activity', (req, res) => {
   res.json([
     { time: '2m ago',  event: '✅ Terraform apply completed — EKS node group scaled', type: 'success' },
@@ -40,29 +91,56 @@ app.get('/api/activity', (req, res) => {
   ]);
 });
 
-// ── Contact form ──────────────────────────────────────────────
-app.post('/api/contact', (req, res) => {
-  const { name, email, subject, message } = req.body;
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: 'Missing required fields' });
+// ── Contact form with Validation & Spam Protection ────────────
+app.post('/api/contact', rateLimiter, (req, res) => {
+  const { name, email, subject, message, bot_check } = req.body;
+
+  // 1. Honeypot check
+  if (bot_check) {
+    return res.status(400).json({ error: 'Bot activity detected by WAF.' });
   }
 
+  // 2. Field validation
+  if (!name || typeof name !== 'string' || name.trim().length < 2) {
+    return res.status(400).json({ error: 'Valid sender name is required.' });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email.trim())) {
+    return res.status(400).json({ error: 'Valid email address is required.' });
+  }
+
+  if (!message || typeof message !== 'string' || message.trim().length < 5) {
+    return res.status(400).json({ error: 'Message body must be at least 5 characters.' });
+  }
+
+  const recordId = `rec-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
   const submission = {
-    id: Date.now(),
+    id: recordId,
     timestamp: new Date().toISOString(),
-    name, email, subject, message,
+    name: name.trim(),
+    email: email.trim(),
+    subject: (subject || 'Route 53 Contact Inquiry').trim(),
+    message: message.trim(),
+    ip: req.ip || req.headers['x-forwarded-for'] || 'client',
   };
 
-  // Log to file
-  const logPath = path.join(__dirname, 'submissions.jsonl');
-  fs.appendFileSync(logPath, JSON.stringify(submission) + '\n');
+  // 3. Save submission to jsonl log file
+  try {
+    const logPath = path.join(__dirname, 'submissions.jsonl');
+    fs.appendFileSync(logPath, JSON.stringify(submission) + '\n');
+  } catch (err) {
+    console.error('Failed to append to submissions log file:', err);
+  }
 
-  console.log(`📩 New contact from ${name} <${email}>: ${subject}`);
+  console.log(`📩 Route 53 Dispatch from ${submission.name} <${submission.email}> [${recordId}]: ${submission.subject}`);
 
   res.json({
     success: true,
-    message: 'Record resolved. Response within 24h.',
-    id: submission.id,
+    message: 'DNS Record dispatched successfully to Route 53 hosted zone.',
+    recordId: submission.id,
+    ttl: 300,
+    status: 'INSYNC',
   });
 });
 
@@ -71,3 +149,4 @@ app.listen(PORT, () => {
   console.log(`   Health: http://localhost:${PORT}/api/health`);
   console.log(`   Stats:  http://localhost:${PORT}/api/stats`);
 });
+

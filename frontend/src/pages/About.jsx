@@ -33,14 +33,20 @@ export default function About() {
       <div className="about-grid">
         {/* Left: bio */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.15 }}
         >
           <div className="card" style={{ marginBottom: '20px' }}>
             <div className="about-operator-hero">
               <div className="about-portrait-frame">
-                <img src={profile.avatarUrl} alt={profile.name} className="about-portrait-img" />
+                <img
+                  src={profile.avatarUrl}
+                  alt={profile.name}
+                  className="about-portrait-img"
+                  decoding="async"
+                  loading="eager"
+                />
                 <div className="about-portrait-status">
                   <span className="status-ping-dot" />
                   <span>ONLINE</span>
@@ -86,9 +92,9 @@ export default function About() {
 
         {/* Right: IAM card */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.15, delay: 0.02 }}
         >
           <div className="iam-card" style={{ marginBottom: '20px' }}>
             <div className="iam-title">

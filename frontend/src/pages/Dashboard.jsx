@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { profile, skills, activityFeed } from '../data/resumeData';
 import { NavLink } from 'react-router-dom';
+import { FiRefreshCw } from 'react-icons/fi';
 import {
   AwsIamIcon,
   AwsEc2Icon,
@@ -110,7 +112,7 @@ function XPBar({ pct }) {
           className="xp-fill"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
         />
       </div>
     </div>
@@ -119,6 +121,70 @@ function XPBar({ pct }) {
 
 export default function Dashboard() {
   const xpPct = Math.round((profile.xp / profile.maxXp) * 100);
+  const [activities, setActivities] = useState(activityFeed);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const getRelativeTime = (dateString) => {
+    if (!dateString) return 'Live';
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  };
+
+  const fetchGithubActivity = async () => {
+    setIsRefreshing(true);
+    try {
+      const res = await fetch('https://api.github.com/users/JEEVANAND-24/events/public?per_page=6');
+      if (!res.ok) {
+        setIsRefreshing(false);
+        return;
+      }
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const liveFeed = data.slice(0, 6).map((evt) => {
+          let service = 'terraform';
+          let eventText = `GitHub Event: ${evt.type} on ${evt.repo.name.replace('JEEVANAND-24/', '')}`;
+
+          if (evt.type === 'PushEvent') {
+            service = 'terraform';
+            const commitMsg = evt.payload?.commits?.[0]?.message || 'Pushed new commit update';
+            eventText = `Git Push: ${commitMsg} in ${evt.repo.name.replace('JEEVANAND-24/', '')}`;
+          } else if (evt.type === 'CreateEvent') {
+            service = 'eks';
+            eventText = `Created ${evt.payload?.ref_type || 'repository'}: ${evt.repo.name.replace('JEEVANAND-24/', '')}`;
+          } else if (evt.type === 'WatchEvent') {
+            service = 'cloudwatch';
+            eventText = `Starred repository: ${evt.repo.name.replace('JEEVANAND-24/', '')}`;
+          } else if (evt.type === 'IssueCommentEvent' || evt.type === 'IssuesEvent') {
+            service = 'eventbridge';
+            eventText = `Issue activity in ${evt.repo.name.replace('JEEVANAND-24/', '')}`;
+          }
+          return {
+            time: getRelativeTime(evt.created_at),
+            service,
+            event: eventText,
+          };
+        });
+        setActivities(liveFeed);
+      }
+    } catch (_) {
+      // Fall back gracefully to static activityFeed
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGithubActivity();
+  }, []);
 
   return (
     <div className="fade-in">
@@ -127,15 +193,21 @@ export default function Dashboard() {
         {/* Player card */}
         <motion.div
           className="player-card"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.15 }}
           style={{ flex: '1', minWidth: '260px' }}
         >
           <div className="player-level">
             <div className="level-circle">
               {profile.avatarUrl ? (
-                <img src={profile.avatarUrl} alt={profile.name} className="player-avatar-img" />
+                <img
+                  src={profile.avatarUrl}
+                  alt={profile.name}
+                  className="player-avatar-img"
+                  decoding="async"
+                  loading="eager"
+                />
               ) : (
                 "Lv"
               )}
@@ -155,7 +227,7 @@ export default function Dashboard() {
               className="player-xp-fill"
               initial={{ width: 0 }}
               animate={{ width: `${xpPct}%` }}
-              transition={{ duration: 1.4, ease: 'easeOut', delay: 0.4 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
             />
           </div>
           <div className="stat-grid">
@@ -181,13 +253,35 @@ export default function Dashboard() {
         {/* Activity feed */}
         <motion.div
           className="activity-feed"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          transition={{ duration: 0.15, delay: 0.03 }}
           style={{ flex: '2', minWidth: '300px' }}
         >
-          <div className="activity-title">Recent Activity — CloudTrail</div>
-          {activityFeed.map((item, i) => (
+          <div className="activity-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Recent Activity — CloudTrail Telemetry</span>
+            <button
+              type="button"
+              onClick={fetchGithubActivity}
+              disabled={isRefreshing}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '11px',
+                fontFamily: 'JetBrains Mono, monospace',
+              }}
+              title="Refresh CloudTrail Live Events"
+            >
+              <FiRefreshCw size={12} style={{ animation: isRefreshing ? 'spin 1s linear infinite' : 'none' }} />
+              <span>{isRefreshing ? 'Syncing...' : 'Refresh'}</span>
+            </button>
+          </div>
+          {activities.map((item, i) => (
             <div className="activity-item" key={i}>
               <span className="activity-time">{item.time}</span>
               <span className="activity-icon-badge">
@@ -208,9 +302,9 @@ export default function Dashboard() {
           {serviceCards.map((card, i) => (
             <motion.div
               key={card.id}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: i * 0.07 }}
+              transition={{ duration: 0.15, delay: i * 0.02 }}
             >
               <NavLink to={card.path} className="service-card">
                 <div className="service-card-head">
@@ -236,3 +330,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

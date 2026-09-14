@@ -292,6 +292,43 @@ h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; }
   gap: 12px;
 }
 
+.accent-switcher-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-tag);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 3px 6px;
+}
+
+.accent-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  opacity: 0.7;
+}
+
+.accent-dot:hover {
+  transform: scale(1.25);
+  opacity: 1;
+}
+
+.accent-dot.active {
+  transform: scale(1.25);
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--console-bg), 0 0 0 3px currentColor;
+}
+
+.accent-dot.dot-blue { background: #38bdf8; color: #38bdf8; }
+.accent-dot.dot-teal { background: #2dd4bf; color: #2dd4bf; }
+.accent-dot.dot-sage { background: #34d399; color: #34d399; }
+.accent-dot.dot-purple { background: #818cf8; color: #818cf8; }
+
 .console-chrome-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
@@ -1999,22 +2036,30 @@ h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; }
   .console-label { display: none; }
 }
 
-/* ── Utility animations ────────────────────────────────────── */
+/* ── Utility animations (Hardware Accelerated for Zero-Lag Route Switching) ── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-.fade-in { animation: fadeIn 0.4s ease forwards; }
+.fade-in {
+  animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translate3d(-6px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
-.slide-in { animation: slideIn 0.3s ease forwards; }
+.slide-in {
+  animation: slideIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
 
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.10s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.20s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.30s; }
+.stagger-1 { animation-delay: 0.02s; }
+.stagger-2 { animation-delay: 0.04s; }
+.stagger-3 { animation-delay: 0.06s; }
+.stagger-4 { animation-delay: 0.08s; }
+.stagger-5 { animation-delay: 0.10s; }
+.stagger-6 { animation-delay: 0.12s; }
+
