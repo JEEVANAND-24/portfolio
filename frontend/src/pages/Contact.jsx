@@ -97,21 +97,25 @@ export default function Contact() {
     // ── EmailJS: sends email directly from browser (works on GitHub Pages) ──
     // To activate: sign up at emailjs.com, create a service + template,
     // then replace the three placeholders below with your IDs.
-    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
-    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xyz456'
-    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'abcDEFghiJKL'
+    const EMAILJS_SERVICE_ID = 'service_51x6uo8';   // e.g. 'service_abc123'
+    const EMAILJS_TEMPLATE_ID = 'template_lmbxwlv';  // e.g. 'template_xyz456'
+    const EMAILJS_PUBLIC_KEY = 'ZLbBwP9ma4lKoXkFN';   // e.g. 'abcDEFghiJKL'
 
     try {
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
-          from_name:    form.name,
-          from_email:   form.email,
-          subject:      form.subject || 'Portfolio Contact',
-          message:      form.message,
-          to_email:     profile.email,
-          reply_to:     form.email,
+          name: form.name,
+          from_name: form.name,
+          email: form.email,
+          from_email: form.email,
+          title: form.subject || 'Reaching out mail',
+          subject: form.subject ? `Reaching out mail: ${form.subject}` : 'Reaching out mail',
+          message: form.message,
+          content: form.message,
+          to_email: 'rjeevanand.official@gmail.com',
+          reply_to: form.email,
         },
         EMAILJS_PUBLIC_KEY
       );
@@ -123,7 +127,7 @@ export default function Contact() {
         const existing = JSON.parse(localStorage.getItem('portfolio_contact_submissions') || '[]');
         existing.push({ ...form, timestamp: new Date().toISOString() });
         localStorage.setItem('portfolio_contact_submissions', JSON.stringify(existing));
-      } catch (_) {}
+      } catch (_) { }
       setError('Message saved locally — email delivery needs EmailJS configured. See README.');
       setSubmitted(true);
     } finally {
@@ -381,7 +385,7 @@ export default function Contact() {
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 20px auto' }}>
                   {error
-                    ? <>{error}<br/><span style={{fontSize:'11px',opacity:0.7}}>To enable live email: set up your EmailJS IDs in Contact.jsx.</span></>
+                    ? <>{error}<br /><span style={{ fontSize: '11px', opacity: 0.7 }}>To enable live email: set up your EmailJS IDs in Contact.jsx.</span></>
                     : <>Thank you, <strong>{form.name}</strong>. Your message has been sent to <strong>{profile.email}</strong>. Jeevanand will reply within <strong>{profile.response}</strong>.</>
                   }
                 </div>
