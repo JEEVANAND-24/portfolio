@@ -2063,3 +2063,145 @@ h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; }
 .stagger-5 { animation-delay: 0.10s; }
 .stagger-6 { animation-delay: 0.12s; }
 
+/* ── Enhanced Mobile Responsiveness ──────────────────────────── */
+
+/* Tablet: 768px */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 120px;
+    --sidebar-width: 0px;
+  }
+
+  .sidebar { display: none; }
+  .header-bar { padding: 8px 12px; }
+
+  .console-window-card { padding: 8px 12px 10px 12px; border-radius: 10px; }
+
+  /* Hide chrome bar extras on tablet */
+  .console-chrome-label { display: none; }
+  .header-status-panel  { display: none; }
+
+  /* Stack the console card body vertically on tablet */
+  .console-card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .console-col-divider { display: none; }
+
+  .console-col-profile { gap: 10px; }
+  .console-avatar-ring { width: 46px; height: 46px; }
+
+  /* Col 2 stats: wrap into 2 cols */
+  .console-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+
+  /* Col 3: actions inline */
+  .console-col-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+  }
+  .console-cv-row { margin-bottom: 0; }
+
+  /* Page content */
+  .main-content { padding: 16px 12px; }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+  .about-grid     { grid-template-columns: 1fr; }
+  .contact-grid   { grid-template-columns: 1fr; }
+
+  /* Contact operator banner */
+  .contact-operator-banner {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  .operator-banner-left  { flex-direction: column; align-items: flex-start; }
+  .operator-banner-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 8px;
+  }
+  .banner-btn { flex: 1; justify-content: center; min-width: 120px; }
+
+  /* DNS table: hide description col on small screens */
+  .dns-table th:nth-child(2),
+  .dns-table td:nth-child(2) { display: none; }
+
+  /* About portrait */
+  .about-operator-hero { flex-direction: column; align-items: flex-start; }
+  .about-portrait-frame { width: 90px; height: 90px; }
+}
+
+/* Mobile: 480px */
+@media (max-width: 480px) {
+  :root {
+    --header-height: 105px;
+    --sidebar-width: 0px;
+  }
+
+  html { font-size: 13px; }
+
+  .sidebar { display: none; }
+  .header-bar { padding: 6px 10px; }
+  .console-window-card { padding: 6px 10px 8px 10px; border-radius: 8px; }
+
+  /* Hide non-essential chrome */
+  .console-chrome-bar { margin-bottom: 6px; }
+  .accent-switcher-group { display: none; }
+  .sidebar-colors { display: none; }
+
+  /* Profile row compact */
+  .console-col-profile { gap: 8px; }
+  .console-avatar-ring { width: 40px; height: 40px; border-radius: 10px; }
+  .console-name { font-size: 13px !important; }
+  .console-handle, .console-label { font-size: 10px !important; }
+
+  /* Stats hidden on mobile */
+  .console-stat-grid { display: none; }
+
+  /* Actions: just show email + CV button */
+  .console-col-actions { gap: 6px; }
+  .console-email-link { font-size: 10px; }
+
+  /* Page content */
+  .main-content { padding: 12px 10px; }
+  .dashboard-grid  { grid-template-columns: 1fr; }
+  .projects-grid   { grid-template-columns: 1fr; }
+  .skills-grid     { grid-template-columns: 1fr; }
+  .certs-grid      { grid-template-columns: 1fr; }
+  .card { padding: 14px 12px; }
+
+  /* Contact form */
+  .contact-operator-banner { padding: 12px; }
+  .operator-banner-avatar-frame { width: 52px; height: 52px; }
+  .operator-banner-name { font-size: 16px !important; }
+  .operator-banner-meta { flex-wrap: wrap; gap: 4px; font-size: 10px; }
+
+  /* DNS table: show only type + value + action */
+  .dns-table th:nth-child(2),
+  .dns-table td:nth-child(2) { display: none; }
+  .dns-table { font-size: 11px; }
+  .dns-value-cell { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Form inputs full width */
+  .form-input, .form-textarea { font-size: 13px; }
+  .btn-submit { font-size: 13px; padding: 10px 16px; }
+
+  /* Quick connect cards */
+  .quick-connect-grid { grid-template-columns: 1fr; }
+
+  /* Page headers */
+  .page-title { font-size: 20px !important; }
+  .page-subtitle { font-size: 12px; }
+}
+
+/* Safe area for notched phones (iPhone X+) */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .app-shell { padding-bottom: env(safe-area-inset-bottom); }
+  .header-bar { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+}

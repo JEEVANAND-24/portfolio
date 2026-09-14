@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 import { profile } from '../data/resumeData';
 import {
   FiSend, FiGithub, FiLinkedin, FiMail, FiPhone, FiMapPin,
-  FiClock, FiCopy, FiCheck, FiExternalLink, FiGlobe
+  FiClock, FiCopy, FiCheck, FiExternalLink, FiAlertCircle
 } from 'react-icons/fi';
 import { AwsRoute53Icon, AwsLogo } from '../components/AwsIcons';
 
@@ -75,9 +76,10 @@ const dnsRecords = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', bot_check: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
 
   const copyToClipboard = (text, key) => {
@@ -88,41 +90,45 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.bot_check) return; // honeypot
     setLoading(true);
+    setError(null);
 
-    const submissionPayload = {
-      ...form,
-      timestamp: new Date().toISOString(),
-      id: Date.now(),
-    };
+    // ── EmailJS: sends email directly from browser (works on GitHub Pages) ──
+    // To activate: sign up at emailjs.com, create a service + template,
+    // then replace the three placeholders below with your IDs.
+    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xyz456'
+    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'abcDEFghiJKL'
 
-    // Attempt local API with 1.2s timeout; fallback gracefully if offline/on GitHub Pages
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1200);
-
-      await fetch('http://localhost:3001/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-    } catch (_) {
-      // Local storage fallback for live hosting environments
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name:    form.name,
+          from_email:   form.email,
+          subject:      form.subject || 'Portfolio Contact',
+          message:      form.message,
+          to_email:     profile.email,
+          reply_to:     form.email,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+      setSubmitted(true);
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      // Graceful fallback: save to localStorage so submission isn't lost
       try {
         const existing = JSON.parse(localStorage.getItem('portfolio_contact_submissions') || '[]');
-        existing.push(submissionPayload);
+        existing.push({ ...form, timestamp: new Date().toISOString() });
         localStorage.setItem('portfolio_contact_submissions', JSON.stringify(existing));
-      } catch (err) {
-        console.warn('Storage save fallback skipped:', err);
-      }
-    }
-
-    setTimeout(() => {
-      setLoading(false);
+      } catch (_) {}
+      setError('Message saved locally — email delivery needs EmailJS configured. See README.');
       setSubmitted(true);
-    }, 300);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -160,7 +166,7 @@ export default function Contact() {
             </div>
             <h2 className="operator-banner-name">{profile.name}</h2>
             <p className="operator-banner-role">
-              AWS Cloud Engineer | DevOps | Linux Administration | Site Reliability
+              Cloud & Platform Engineer · DevOps · SRE
             </p>
             <div className="operator-banner-meta">
               <span><FiMapPin size={12} /> {profile.location}</span>
@@ -367,14 +373,17 @@ export default function Contact() {
                 animate={{ opacity: 1, scale: 1 }}
                 style={{ textAlign: 'center', padding: '50px 24px', background: 'var(--bg-tag)', borderRadius: 'var(--radius-md)', margin: '20px 0' }}
               >
-                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', border: '2px solid #22c55e' }}>
-                  <FiCheck size={28} />
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: error ? 'rgba(251,191,36,0.15)' : 'rgba(34, 197, 94, 0.15)', color: error ? '#fbbf24' : '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', border: `2px solid ${error ? '#fbbf24' : '#22c55e'}` }}>
+                  {error ? <FiAlertCircle size={28} /> : <FiCheck size={28} />}
                 </div>
                 <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                  DNS Transmission Resolved!
+                  {error ? 'Saved Locally!' : 'DNS Transmission Resolved!'}
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 20px auto' }}>
-                  Thank you, <strong>{form.name}</strong>. Your payload has been dispatched to <strong>{profile.email}</strong>. Jeevanand will follow up within <strong>{profile.response}</strong>.
+                  {error
+                    ? <>{error}<br/><span style={{fontSize:'11px',opacity:0.7}}>To enable live email: set up your EmailJS IDs in Contact.jsx.</span></>
+                    : <>Thank you, <strong>{form.name}</strong>. Your message has been sent to <strong>{profile.email}</strong>. Jeevanand will reply within <strong>{profile.response}</strong>.</>
+                  }
                 </div>
                 <button
                   type="button"
