@@ -112,10 +112,11 @@ export default function Contact() {
           from_email: form.email,
           title: form.subject || 'Reaching out mail',
           subject: form.subject ? `Reaching out mail: ${form.subject}` : 'Reaching out mail',
-          message: form.message,
-          content: form.message,
-          to_email: 'rjeevanand.official@gmail.com',
-          reply_to: form.email,
+          message:      form.message,
+          content:      form.message,
+          time:         new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
+          to_email:     'rjeevanand.official@gmail.com',
+          reply_to:     form.email,
         },
         EMAILJS_PUBLIC_KEY
       );
