@@ -130,7 +130,7 @@ export default function Header() {
           <div className="console-col console-col-actions">
             {/* Row 1: Download CV with split caret */}
             <div className="console-cv-row">
-              <a href="#/resume" className="console-btn-download" title="Download CV">
+              <a href={`${import.meta.env.BASE_URL}Jeevanand_Resume.pdf`} download="Jeevanand_Resume.pdf" className="console-btn-download" title="Download CV">
                 <FiDownload size={13} />
                 <span>Download CV</span>
                 <span className="console-btn-sep" />

@@ -1,6 +1,7 @@
 // ============================================================
 //  ALL PORTFOLIO CONTENT — JEEVANAND R
 // ============================================================
+import portraitImg from '../assets/jeevanand_portrait.jpg';
 
 export const profile = {
   name: "JEEVANAND R",
@@ -21,7 +22,7 @@ export const profile = {
     "AWS Cloud Engineer · Bengaluru, India · 2 Years Experience",
     "Enterprise Banking Workloads · Terraform IaC · AWS Certified Cloud Practitioner",
   ],
-  avatarUrl: "/jeevanand_portrait.jpg",
+  avatarUrl: portraitImg,
   xp: 8650,
   level: 8,
   maxXp: 10000,

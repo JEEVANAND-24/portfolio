@@ -145,7 +145,7 @@ export default function Contact() {
         <div className="operator-banner-left">
           <div className="operator-banner-avatar-frame">
             <img
-              src={profile.avatarUrl || '/jeevanand_portrait.jpg'}
+              src={profile.avatarUrl}
               alt={profile.name}
               className="operator-banner-avatar"
               decoding="async"
