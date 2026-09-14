@@ -6,7 +6,7 @@ import portraitImg from '../assets/jeevanand_portrait.jpg';
 export const profile = {
   name: "JEEVANAND R",
   firstName: "Jeevanand R",
-  title: "AWS Cloud Engineer | DevOps | Linux Admin | SRE",
+  title: "Cloud Engineer · Platform Engineer · DevOps · SRE",
   handle: "operator/jeevanand",
   email: "rjeevanand9632@gmail.com",
   phone: "+91 9632080135",
@@ -17,10 +17,10 @@ export const profile = {
   response: "<24h",
   github: "https://github.com/JEEVANAND-24",
   linkedin: "https://www.linkedin.com/in/jeevanand-r-2001",
-  bio: `AWS Cloud Engineer with 2 years of experience designing, automating, and supporting enterprise cloud infrastructure. Strong foundation in AWS, Terraform, Linux administration, and cloud automation, complemented by hands-on exposure to Docker, Kubernetes, and Amazon EKS. Committed to continuous learning and leveraging DevOps practices and AI-powered automation to build scalable, secure, and reliable cloud platforms.`,
+  bio: `Cloud & Platform Engineer with 2 years of experience building and automating enterprise-grade infrastructure on AWS. Proven expertise in Terraform IaC, CI/CD pipelines, Kubernetes (EKS), and Linux systems — delivering scalable, cost-optimized, and highly available platforms for mission-critical banking workloads. AWS Certified with a strong DevOps and SRE mindset focused on observability, automation, and zero-downtime deployments.`,
   highlights: [
-    "AWS Cloud Engineer · Bengaluru, India · 2 Years Experience",
-    "Enterprise Banking Workloads · Terraform IaC · AWS Certified Cloud Practitioner",
+    "Cloud & Platform Engineer · Bengaluru, India · 2 YOE · AWS Certified",
+    "Terraform · Kubernetes (EKS) · CI/CD · Docker · Linux · Observability · FinOps",
   ],
   avatarUrl: portraitImg,
   xp: 8650,
