@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ScrollToTop from './components/ScrollToTop';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import Portfolio from './pages/Portfolio';
@@ -33,6 +34,7 @@ export default function App() {
             </Routes>
           </main>
         </div>
+        <MobileNav />
       </div>
     </Router>
   </ThemeProvider>

@@ -50,10 +50,11 @@ export default function Header() {
                 type="button"
               />
               <button
-                className={`accent-dot dot-purple ${accent === 'purple' ? 'active' : ''}`}
-                onClick={() => setAccent('purple')}
+                className={`accent-dot dot-purple ${accent === 'purple' || accent === 'lavender' ? 'active' : ''}`}
+                onClick={() => setAccent('lavender')}
                 title="Serene Lavender"
                 type="button"
+                aria-label="Set Serene Lavender Accent"
               />
             </div>
 

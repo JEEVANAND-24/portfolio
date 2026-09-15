@@ -48,7 +48,7 @@ export default function Sidebar() {
         />
         <button
           type="button"
-          className={`color-dot dot-lavender ${accent === 'lavender' ? 'active' : ''}`}
+          className={`color-dot dot-lavender ${accent === 'lavender' || accent === 'purple' ? 'active' : ''}`}
           style={{ background: '#818cf8' }}
           onClick={() => setAccent('lavender')}
           title="Serene Lavender (Twilight & Eye-Comfort)"
