@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { experience, education, certifications } from '../data/resumeData';
+import { experience, education } from '../data/resumeData';
 import { FiMapPin, FiExternalLink, FiCheckCircle } from 'react-icons/fi';
 
 const tabConfig = [

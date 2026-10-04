@@ -34,8 +34,10 @@ const commandHandlers = {
     ),
   ],
   projects: () => projects.map(p => ({
-    type: 'success',
-    text: `📦 ${p.name.padEnd(35)} — ${p.displayName} (⭐ ${p.stars})`
+    type: p.isPrivate ? 'info' : 'success',
+    text: p.isPrivate
+      ? `🔒 ${p.name.padEnd(35)} — ${p.displayName} [Enterprise NDA · Private IP]`
+      : `📦 ${p.name.padEnd(35)} — ${p.displayName} (⭐ ${p.stars})`
   })),
   contact: () => [
     { type: 'info', text: `Name:     ${profile.name}` },

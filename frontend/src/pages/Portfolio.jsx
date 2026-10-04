@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { projects, certifications } from '../data/resumeData';
-import { FiGithub, FiExternalLink, FiStar, FiLayers, FiAward } from 'react-icons/fi';
+import { FiGithub, FiExternalLink, FiStar, FiLayers, FiAward, FiLock, FiShield } from 'react-icons/fi';
 import { AwsLogo } from '../components/AwsIcons';
 
 const filterOptions = [
@@ -51,7 +51,9 @@ export default function Portfolio() {
             transition={{ duration: 0.15, delay: i * 0.02 }}
           >
             <div className="project-thumb">
-              <div className={`project-type-badge ${proj.type}`}>PROJECT</div>
+              <div className={`project-type-badge ${proj.type}`}>
+                {proj.type === 'ENTERPRISE' ? 'ENTERPRISE' : 'PROJECT'}
+              </div>
               <AwsLogo size={44} color="#FF9900" style={{ opacity: 0.22 }} />
             </div>
             <div className="project-body">
@@ -61,18 +63,39 @@ export default function Portfolio() {
               <div className="project-tags">
                 {proj.tags.map((t) => <span key={t} className="tag">{t}</span>)}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <FiStar size={12} /> {proj.stars} stars
-                <span>·</span>
-                <span>Production</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                {proj.isPrivate ? (
+                  <span className="enterprise-meta-tag">
+                    <FiShield size={11} /> Enterprise · NDA Protected
+                  </span>
+                ) : (
+                  <>
+                    <FiStar size={12} /> {proj.stars} stars
+                    <span>·</span>
+                    <span>Production</span>
+                  </>
+                )}
               </div>
               <div className="project-actions">
-                <a href={proj.github} target="_blank" rel="noopener noreferrer" className="btn-action">
-                  <FiGithub size={13} /> Code
-                </a>
-                <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="btn-action primary">
-                  <FiExternalLink size={13} /> View
-                </a>
+                {proj.isPrivate ? (
+                  <div className="btn-action-private" title="Source code is proprietary to enterprise banking client and covered under NDA">
+                    <FiLock size={12} />
+                    <span>Private / Enterprise NDA</span>
+                  </div>
+                ) : (
+                  <>
+                    {proj.github && (
+                      <a href={proj.github} target="_blank" rel="noopener noreferrer" className={`btn-action${!proj.demo ? ' primary' : ''}`}>
+                        <FiGithub size={13} /> {proj.demo ? 'Code' : 'View Code on GitHub'}
+                      </a>
+                    )}
+                    {proj.demo && (
+                      <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="btn-action primary">
+                        <FiExternalLink size={13} /> View
+                      </a>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
@@ -89,7 +112,16 @@ export default function Portfolio() {
           >
             <div className="project-thumb" style={{ background: `linear-gradient(135deg, ${cert.color}22 0%, #0f172a 100%)` }}>
               <div className="project-type-badge CERTIFICATIONS">CERTIFICATION</div>
-              <AwsLogo size={44} color="#FF9900" style={{ opacity: 0.35 }} />
+              {cert.badgeImage ? (
+                <img
+                  src={cert.badgeImage}
+                  alt={cert.name}
+                  style={{ width: '64px', height: '64px', objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.5))' }}
+                  loading="lazy"
+                />
+              ) : (
+                <AwsLogo size={44} color={cert.color || "#FF9900"} style={{ opacity: 0.35 }} />
+              )}
             </div>
             <div className="project-body">
               <div className="project-name">{cert.issuerLogo}/</div>
@@ -99,13 +131,13 @@ export default function Portfolio() {
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono', marginBottom: '4px' }}>
                   Issued: {cert.date} · Expires: {cert.expiry}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={cert.credentialId}>
                   ID: {cert.credentialId}
                 </div>
               </div>
               <div className="project-actions">
                 <a href={cert.verifyUrl} target="_blank" rel="noopener noreferrer" className="btn-action primary">
-                  ✓ Verify
+                  <FiExternalLink size={13} /> Verify Credential
                 </a>
               </div>
             </div>

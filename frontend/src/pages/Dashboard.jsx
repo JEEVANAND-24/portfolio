@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { profile, skills, activityFeed } from '../data/resumeData';
+import { profile, skills, activityFeed, certifications } from '../data/resumeData';
 import { NavLink } from 'react-router-dom';
 import { FiRefreshCw } from 'react-icons/fi';
 import {
@@ -70,9 +70,9 @@ const serviceCards = [
     label: 'Compliance & Shield',
     name: 'IAM Policies',
     sub: 'Certifications',
-    stat1: '6 certs',
-    stat2: 'AWS + Azure',
-    path: '/resume',
+    stat1: `${certifications.length} badges`,
+    stat2: 'AWS · Red Hat',
+    path: '/portfolio',
   },
   {
     id: 'skills',
